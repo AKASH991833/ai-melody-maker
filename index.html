@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Melody Maker — Generate, Play & Export Melodies Free</title>
+<meta name="description" content="Generate original melodies with scales, chords and tempo control. Play them live, edit on the piano roll, export as WAV. Free, private, no sign-up.">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css"><link rel="stylesheet" href="accent.css"><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-head"><div class="wrap">
+<a class="brand" href="#top"><span class="mark"><svg viewBox="0 0 512 512" fill="none"><path d="M180 380V170l170-34v210" stroke="#fff" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/><circle cx="146" cy="380" r="46" fill="#fff"/><circle cx="316" cy="346" r="46" fill="#fff"/></svg></span><span>AI Melody Maker<small>Generate · Play · Export WAV</small></span></a>
+<nav class="head-nav">
+<a href="#studio">Studio</a><a href="#saved">Saved</a>
+<button class="icon-btn keep hidden" id="pwa-install" onclick="pkInstall()" title="Install app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg></button>
+<button class="icon-btn" onclick="pkToggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode">
+<svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+<svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4l1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+</button></nav>
+</div></header>
+<main id="top">
+<section class="hero"><div class="wrap">
+<span class="eyebrow">Web Audio · 100% on-device · No sign-up</span>
+<h1>A melody, every time you press the button.</h1>
+<p class="sub">Procedural composition with real musical structure: scales, chord progressions, phrase contour and dynamics. Play it instantly, watch the piano roll, save your favorites, export as WAV. Everything happens in your browser.</p>
+<div class="cta-row"><a class="btn btn-pri" href="#studio">Open the studio</a></div>
+</div></section>
+
+<section class="section" id="studio"><div class="wrap">
+<div class="sec-head"><h2>Studio</h2><p>Same seed, same melody — share a seed to share a tune.</p></div>
+<div class="card">
+<div class="ctl-grid">
+<div><label class="f-label" for="key">Key</label><select id="key" class="sel"></select></div>
+<div><label class="f-label" for="scale">Scale</label><select id="scale" class="sel"></select></div>
+<div><label class="f-label" for="bars">Length</label><select id="bars" class="sel"><option value="4">4 bars</option><option value="8" selected>8 bars</option><option value="16">16 bars</option></select></div>
+<div><label class="f-label" for="wave">Lead sound</label><select id="wave" class="sel"><option value="triangle">Soft (triangle)</option><option value="sine">Pure (sine)</option><option value="square">Retro (square)</option><option value="sawtooth">Bright (saw)</option></select></div>
+<div><label class="f-label">Tempo: <span id="tempo-val" class="mono">120 BPM</span></label><input type="range" id="tempo" min="60" max="200" value="120" style="width:100%"></div>
+<div><label class="f-label">Note density: <span id="density-val" class="mono">60%</span></label><input type="range" id="density" min="25" max="95" value="60" style="width:100%"></div>
+<div><label class="f-label" for="seed">Seed</label><input type="number" id="seed" class="sel" min="1" max="99999"></div>
+<div style="display:flex;align-items:flex-end;gap:8px"><label style="display:flex;gap:8px;align-items:center;font:600 13px var(--font-body);color:var(--ink-2);padding-bottom:10px"><input type="checkbox" id="pad-on" checked style="width:auto"> Chord pad</label></div>
+</div>
+<div class="btn-row">
+<button class="btn btn-pri" id="generate">Generate</button>
+<button class="btn btn-sec" id="randomize">Randomize seed</button>
+<button class="btn btn-sec" id="play"><svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px"><path d="M8 5v14l11-7z"/></svg> Play</button>
+<button class="btn btn-sec" id="export">Export WAV</button>
+</div>
+<p style="margin-top:12px" id="mel-info"></p>
+</div>
+<div class="card" style="margin-top:16px">
+<canvas id="roll" style="width:100%;height:190px"></canvas>
+</div>
+<div class="card" style="margin-top:16px">
+<label class="f-label" for="save-name">Save this melody</label>
+<div style="display:flex;gap:10px;flex-wrap:wrap"><input id="save-name" class="sel" style="flex:1;min-width:180px" placeholder="Name it (e.g. Rainy Tuesday)"><button class="btn btn-sec" id="save-btn">Save</button></div>
+</div>
+</div></section>
+
+<section class="section" id="saved"><div class="wrap">
+<div class="sec-head"><h2>Saved melodies</h2><p>Stored only in this browser.</p></div>
+<div class="card"><div id="save-list"></div></div>
+</div></section>
+
+<section class="section"><div class="wrap">
+<div class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+<span><strong>Honest limits:</strong> melodies are generated by musical rules (scales, chord tones, phrase shapes) with seeded randomness, not by a neural network trained on real songs. Results make great starting points and sketches; they are not finished productions. Sound is synthesized with basic oscillators, so expect a clean chiptune-ish timbre, not real instruments. Saved melodies live in this browser only.</span></div>
+</div></section>
+</main>
+<footer class="site-foot"><div class="wrap cols">
+<div><div class="fbrand">AI Melody Maker</div>
+<p style="margin-top:8px;max-width:52ch">Procedural melodies with scales, chords and a piano roll. Free, private, no sign-up.</p>
+<p style="margin-top:10px">Runs 100% free. <span class="mono">No sign-up. No card.</span></p></div>
+<div style="text-align:right"><p>Built by <a href="https://github.com/AKASH991833" target="_blank" rel="noopener">Akash Vishwakarma</a></p>
+<p style="margin-top:6px"><a href="https://github.com/AKASH991833/ai-melody-maker" target="_blank" rel="noopener">Source on GitHub</a></p></div>
+</div></footer>
+<script src="kit.js"></script>
+<script src="melody-engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
